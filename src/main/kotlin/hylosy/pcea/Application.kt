@@ -9,13 +9,16 @@ import hylosy.pcea.service.event.HoldingEventService
 import hylosy.pcea.service.event.result.EventResultService
 import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.plugins.di.resolve
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit =
+    io.ktor.server.netty.EngineMain
+        .main(args)
 
 suspend fun Application.module() {
     dependencies {
@@ -27,13 +30,13 @@ suspend fun Application.module() {
             EventResultService(
                 this.resolve<HoldingEventRecordDao>(),
                 this.resolve<HoldingEventResultDao>(),
-                this.resolve<ShopsDao>()
-                )
+                this.resolve<ShopsDao>(),
+            )
         }
         provide<HoldingEventService> {
             HoldingEventService(
                 this.resolve<HoldingEventRecordDao>(),
-                this.resolve<HoldingEventResultDao>()
+                this.resolve<HoldingEventResultDao>(),
             )
         }
     }
@@ -70,6 +73,7 @@ suspend fun Application.configureRouting() {
 
 fun Application.configureDatabase() {
     DatabaseManager.initialize(
-        hylosy.pcea.config.ConfigLoader.loadDatabaseConfig()
+        hylosy.pcea.config.ConfigLoader
+            .loadDatabaseConfig(),
     )
 }
