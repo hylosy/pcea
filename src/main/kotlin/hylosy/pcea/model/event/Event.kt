@@ -15,5 +15,8 @@ enum class EventTypeId(
 ) {
     ChampionShip(1),
     CityLeague(2),
-    SealedBattle(7),
+    SealedBattle(7), // Part of limited deck battle
+    ;
+
+    fun constructedDeck(): List<EventTypeId> = listOf(ChampionShip, CityLeague)
 }
