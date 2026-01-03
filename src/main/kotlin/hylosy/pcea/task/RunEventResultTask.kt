@@ -8,7 +8,6 @@ import hylosy.pcea.service.FetchEventResultException
 import hylosy.pcea.service.PokemonCardOfficialSiteClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
 import kotlin.onFailure
 
 
@@ -22,12 +21,20 @@ fun main() {
 suspend fun runEventResultTask() {
     val holdingEventService = ServiceModule.holdingEventService
     val officialSiteClient = PokemonCardOfficialSiteClient()
+    val taskConfig = ConfigLoader.loadFetchHoldingEventResultTaskConfig()
     runCatching {
-        val from = LocalDate.of(2025, 1, 1)
-        val to = LocalDate.of(2025, 4, 30)
-        val events = holdingEventService.getEvents(from, to)
-
-        events.map { it.id }.forEach { holdingEventId ->
+        val holdingEventIds = if (taskConfig.startDate != null && taskConfig.endDate != null) {
+            val from = taskConfig.startDate
+            val to = taskConfig.endDate
+            holdingEventService.getEvents(from, to)
+                .map { it.id }
+        } else if (taskConfig.holdingEventIds.isNotEmpty()) {
+            taskConfig.holdingEventIds
+        } else {
+            emptyList()
+        }
+        println(holdingEventIds)
+        holdingEventIds.forEach { holdingEventId ->
             val result = runCatching {
                 val eventResultResponse = officialSiteClient.fetchEventResult(holdingEventId).getOrThrow()
                 val holdingEventResults =
