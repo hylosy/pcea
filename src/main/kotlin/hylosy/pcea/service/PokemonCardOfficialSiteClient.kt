@@ -14,12 +14,13 @@ class PokemonCardOfficialSiteClient {
     constructor() {
         pceaClient = PCEAClient()
     }
-    /**
+
+    /*
      * Fetch card event from official site.
      */
     suspend fun fetchEvent(offset: Int): Result<OfficialSiteHoldingEventSearchResponse> {
         val endpoint =
-            "$officialSiteDomain/event_search?offset=${offset}&order=4&result_resist=1&event_type[]=3:1&event_type[]=3:2&event_type[]=3:7"
+            "$officialSiteDomain/event_search?offset=$offset&order=4&result_resist=1&event_type[]=3:1&event_type[]=3:2&event_type[]=3:7"
 
         return try {
             val response: HttpResponse = pceaClient.get(endpoint)
@@ -35,7 +36,7 @@ class PokemonCardOfficialSiteClient {
     }
 
     suspend fun fetchEventResult(holdingEventId: Long): Result<SearchEventResultOfficialSiteResponse> {
-        val endpoint = "$officialSiteDomain/event_result_detail_search?event_holding_id=${holdingEventId}&offset=0"
+        val endpoint = "$officialSiteDomain/event_result_detail_search?event_holding_id=$holdingEventId&offset=0"
         return try {
             val response: HttpResponse = pceaClient.get(endpoint)
             if (response.status.isSuccess()) {
@@ -51,7 +52,7 @@ class PokemonCardOfficialSiteClient {
     }
 
     suspend fun fetchImage(deckCode: String): Result<ByteArray> {
-        val endpoint = "https://www.pokemon-card.com/deck/deckView.php/deckID/${deckCode}.png"
+        val endpoint = "https://www.pokemon-card.com/deck/deckView.php/deckID/$deckCode.png"
         return try {
             val response: HttpResponse = pceaClient.get(endpoint)
             if (response.status.isSuccess()) {
@@ -66,4 +67,6 @@ class PokemonCardOfficialSiteClient {
     }
 }
 
-class FetchEventResultException(message: String): Exception(message)
+class FetchEventResultException(
+    message: String,
+) : Exception(message)

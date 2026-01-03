@@ -8,7 +8,7 @@ data class SearchPaginatedEventResultResponse(
     val page: Int,
     val limit: Int,
     val total: Long,
-    val results: List<EventResultSummary>
+    val results: List<EventResultSummary>,
 )
 
 @Serializable
@@ -18,11 +18,11 @@ data class EventResultSummary(
     val prefectureName: String,
     val eventDate: String,
     val leagueName: LeagueName,
-    val results: List<PrizedDeck>
+    val results: List<PrizedDeck>,
 )
 
 @Serializable
-data class PrizedDeck (
+data class PrizedDeck(
     val holdingEventId: Long,
     val rank: Int,
     val deckId: String,
@@ -34,17 +34,18 @@ data class SearchEventResultOfficialSiteResponse(
     val code: Int,
     val event: EventResultResponse,
     val count: Int,
-    val results: List<EventResultDetailResponse>
-)
-@Serializable
-data class HoldingEventDate (
-    val date: String,
-    val timezone_type: Int,
-    val timezone: String
+    val results: List<EventResultDetailResponse>,
 )
 
 @Serializable
-data class EventResultResponse (
+data class HoldingEventDate(
+    val date: String,
+    val timezone_type: Int,
+    val timezone: String,
+)
+
+@Serializable
+data class EventResultResponse(
     val event_title: String,
     val eventTypeId: Int,
     val event_type_title: String,
@@ -71,9 +72,8 @@ data class EventResultResponse (
     val eventAttrId: Int,
 )
 
-
 @Serializable
-data class EventResultDetailResponse (
+data class EventResultDetailResponse(
     val show_profile: Int,
     val player_id: String,
     val name: String,
@@ -84,22 +84,24 @@ data class EventResultDetailResponse (
 )
 
 @Serializable
-data class HoldingEventResult (
+data class HoldingEventResult(
     val holdingEventId: Long,
     val rank: Int,
     val point: Int,
     val deckId: String,
-    val playerId: String
+    val playerId: String,
 ) {
     companion object {
-        fun from(holdingEventId: Long, holdingEventResponse: EventResultDetailResponse): HoldingEventResult {
-            return HoldingEventResult(
+        fun from(
+            holdingEventId: Long,
+            holdingEventResponse: EventResultDetailResponse,
+        ): HoldingEventResult =
+            HoldingEventResult(
                 holdingEventId = holdingEventId,
                 rank = holdingEventResponse.rank,
                 point = holdingEventResponse.point,
                 deckId = holdingEventResponse.deck_id ?: "",
                 playerId = holdingEventResponse.player_id,
             )
-        }
     }
 }

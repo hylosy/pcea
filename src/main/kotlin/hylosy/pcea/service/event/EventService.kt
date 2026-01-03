@@ -5,7 +5,7 @@ import hylosy.pcea.model.event.Event
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class EventService(
-    val eventDao: EventDao
+    val eventDao: EventDao,
 ) {
     fun createEvents(events: List<Event>) {
         try {

@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 class HoldingEventService(
     val holdingEventRecordDao: HoldingEventRecordDao,
-    val holdingEventResultDao: HoldingEventResultDao
+    val holdingEventResultDao: HoldingEventResultDao,
 ) {
     fun createEvents(events: List<HoldingEventRecord>) {
         transaction {
@@ -26,23 +26,23 @@ class HoldingEventService(
         }
     }
 
-    fun getEvents(from: LocalDate, to: LocalDate): List<HoldingEventRecord> {
-         return transaction {
-             holdingEventRecordDao.getByDates(from, to)
+    fun getEvents(
+        from: LocalDate,
+        to: LocalDate,
+    ): List<HoldingEventRecord> =
+        transaction {
+            holdingEventRecordDao.getByDates(from, to)
         }
-    }
 
-    fun getDeckCodes(): List<String> {
-        return transaction {
+    fun getDeckCodes(): List<String> =
+        transaction {
             holdingEventResultDao.getAllDeckIds()
         }
-    }
 
-    fun getDeckCodesByHoldingEventIds(holdingEventIds: List<Long>): List<String> {
-        return transaction {
+    fun getDeckCodesByHoldingEventIds(holdingEventIds: List<Long>): List<String> =
+        transaction {
             holdingEventResultDao.getDeckIdsByHoldingEventIds(holdingEventIds)
         }
-    }
 
     fun createHoldingEventResults(eventResults: List<HoldingEventResult>) {
         try {

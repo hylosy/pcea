@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.1.0"
     kotlin("plugin.serialization") version "2.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
 }
 
 kotlin {
@@ -14,26 +15,26 @@ repositories {
     mavenCentral()
 }
 
-val ktor_version: String by project
-val logback_version: String by project
+val ktorVersion: String by project
+val logbackVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib"))
     // Ktor Server
-    implementation("io.ktor:ktor-server-core:${ktor_version}")
-    implementation("io.ktor:ktor-server-netty:${ktor_version}")
-    implementation("io.ktor:ktor-server-content-negotiation:${ktor_version}")
-    implementation("io.ktor:ktor-server-cors:${ktor_version}")
-    implementation("io.ktor:ktor-server-di:${ktor_version}")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion") // TODO: version up
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-di:$ktorVersion")
 
-    implementation("io.ktor:ktor-client-core:${ktor_version}")
-    implementation("io.ktor:ktor-client-cio:${ktor_version}")
-    implementation("io.ktor:ktor-client-content-negotiation:${ktor_version}")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:${ktor_version}")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     // logging
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation("ch.qos.logback:logback-classic:${logback_version}")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion") // TODO: version up
     // NOTE: If you are use newer version than v9, you need update java to 17.
     implementation("org.flywaydb:flyway-core:8.5.13")
     implementation("org.flywaydb:flyway-mysql:8.5.13")

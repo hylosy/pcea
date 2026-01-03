@@ -5,16 +5,15 @@ data class PhysicalCard(
     val name: String,
 )
 
-
-
 data class CardRelations(
     val cardId: Int,
     val physicalCardId: Int,
     val name: String,
 )
 
-
-enum class CardType(val value: Int) {
+enum class CardType(
+    val value: Int,
+) {
     Pokemon(1),
     Goods(2),
     Tool(3),

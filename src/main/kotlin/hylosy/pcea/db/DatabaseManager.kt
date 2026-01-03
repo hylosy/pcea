@@ -11,7 +11,7 @@ object DatabaseManager {
                 url = config.url,
                 driver = config.driver,
                 user = config.user,
-                password = config.password
+                password = config.password,
             )
             initialized = true
         }
@@ -21,14 +21,14 @@ object DatabaseManager {
         url: String,
         driver: String,
         user: String,
-        password: String
+        password: String,
     ) {
         if (!initialized) {
             Database.connect(
                 url = url,
                 driver = driver,
                 user = user,
-                password = password
+                password = password,
             )
             initialized = true
         }
@@ -39,5 +39,5 @@ data class DatabaseConfig(
     val url: String,
     val driver: String,
     val user: String,
-    val password: String
+    val password: String,
 )

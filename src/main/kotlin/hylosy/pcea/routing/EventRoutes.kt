@@ -2,10 +2,11 @@ package hylosy.pcea.routing
 
 import hylosy.pcea.controllers.EventResultController
 import hylosy.pcea.service.event.result.EventResultService
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
 import io.ktor.server.plugins.di.dependencies
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.server.routing.get
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 import java.time.LocalDate
 
 suspend fun Application.configureEventRoutes() {

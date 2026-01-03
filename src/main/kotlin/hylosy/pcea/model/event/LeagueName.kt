@@ -4,7 +4,9 @@ import kotlinx.serialization.Serializable
 
 @JvmInline
 @Serializable
-value class LeagueName(val value: String) {
+value class LeagueName(
+    val value: String,
+) {
     init {
         require(LeagueNameList.contains(value)) {
             "League Name not validated: $value"
@@ -12,9 +14,10 @@ value class LeagueName(val value: String) {
     }
 }
 
-private val LeagueNameList = listOf(
-    "シニア",
-    "ジュニア",
-    "マスター",
-    "オープン"
-)
+private val LeagueNameList =
+    listOf(
+        "シニア",
+        "ジュニア",
+        "マスター",
+        "オープン",
+    )

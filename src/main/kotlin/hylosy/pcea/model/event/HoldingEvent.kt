@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 data class OfficialSiteHoldingEventSearchResponse(
     val code: Int,
     val event: List<OfficialSiteHoldingEvent>,
-    val eventCount: Int
+    val eventCount: Int,
 )
 
 /**
@@ -24,7 +24,7 @@ data class OfficialSiteHoldingEventSearchResponse(
  * regulation: is e.g. スタンダード
  */
 @Serializable
-data class OfficialSiteHoldingEvent (
+data class OfficialSiteHoldingEvent(
     val id: Int,
     val date_id: Int?,
     val shop_id: Int?,
@@ -71,7 +71,7 @@ data class OfficialSiteHoldingEvent (
  * id: is event identifier(eventResponse.event_holding_id)
  * eventId: is event category(eventResponse.id)
  */
-data class HoldingEventRecord (
+data class HoldingEventRecord(
     val id: Long,
     val eventId: Int,
     val eventDate: LocalDate,

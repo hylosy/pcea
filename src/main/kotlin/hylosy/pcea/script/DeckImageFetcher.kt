@@ -11,7 +11,7 @@ import java.io.File
 fun main(args: Array<String>) {
     System.out.printf("Start to fetch deck images task\n")
     DatabaseManager.initialize(
-        ConfigLoader.loadDatabaseConfig()
+        ConfigLoader.loadDatabaseConfig(),
     )
     runBlocking {
         fetchDeckImages()
@@ -21,14 +21,15 @@ fun main(args: Array<String>) {
 suspend fun fetchDeckImages() {
     val taskConfig = ConfigLoader.loadTaskConfig()
     val holdingEventService = ServiceModule.holdingEventService
-    val deckCodes = if (taskConfig.holdingEventIds.isEmpty()) {
-        holdingEventService.getDeckCodes()
-    } else {
-        holdingEventService.getDeckCodesByHoldingEventIds(taskConfig.holdingEventIds)
-    }
+    val deckCodes =
+        if (taskConfig.holdingEventIds.isEmpty()) {
+            holdingEventService.getDeckCodes()
+        } else {
+            holdingEventService.getDeckCodesByHoldingEventIds(taskConfig.holdingEventIds)
+        }
     val deckCodesInImage = fetchStoredImageNames(taskConfig.inputImagePath)
     deckCodes.filterNot { deckCodesInImage.contains(it) }.forEach { deckCode ->
-        downloadImage(deckCode, "${taskConfig.outputImagePath}${deckCode}.png")
+        downloadImage(deckCode, "${taskConfig.outputImagePath}$deckCode.png")
         println(deckCode)
         delay(1000)
     }
@@ -38,7 +39,10 @@ suspend fun fetchDeckImages() {
  * @param deckCode
  * @param outputPath e.g: "/path/to/images/deck_${deckCode}.png"）
  */
-suspend fun downloadImage(deckCode: String, outputPath: String): Result<Unit> {
+suspend fun downloadImage(
+    deckCode: String,
+    outputPath: String,
+): Result<Unit> {
     val officialSiteClient = PokemonCardOfficialSiteClient()
     return officialSiteClient.fetchImage(deckCode).fold(
         onSuccess = { imageBytes ->
@@ -54,21 +58,22 @@ suspend fun downloadImage(deckCode: String, outputPath: String): Result<Unit> {
         },
         onFailure = { error ->
             Result.failure(error)
-        }
+        },
     )
 }
 
-fun fetchStoredImageNames(inputImagePath: String): Set<String> {
-    return try {
-        File(inputImagePath).apply {
-            require(exists() && isDirectory) { "Directory does not exist: $inputImagePath" }
-        }.let { directory ->
-            directory.listFiles()
-                ?.filter { it.isFile && it.name.endsWith(".png") }
-                ?.map { it.nameWithoutExtension }
-                ?: emptyList()
-        }.toSet()
+fun fetchStoredImageNames(inputImagePath: String): Set<String> =
+    try {
+        File(inputImagePath)
+            .apply {
+                require(exists() && isDirectory) { "Directory does not exist: $inputImagePath" }
+            }.let { directory ->
+                directory
+                    .listFiles()
+                    ?.filter { it.isFile && it.name.endsWith(".png") }
+                    ?.map { it.nameWithoutExtension }
+                    ?: emptyList()
+            }.toSet()
     } catch (e: Exception) {
-       throw e
+        throw e
     }
-}

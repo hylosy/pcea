@@ -14,11 +14,14 @@ class DeckService {
             url = "jdbc:mysql://localhost:3306/pcea?useSSL=false&serverTimezone=Asia/Tokyo&rewriteBatchedStatements=true",
             driver = "com.mysql.cj.jdbc.Driver",
             user = "root",
-            password = "root"
+            password = "root",
         )
     }
 
-    fun createCardsInDeck(deckId: String, cards: List<CardInDeck>) {
+    fun createCardsInDeck(
+        deckId: String,
+        cards: List<CardInDeck>,
+    ) {
         connect()
         transaction {
             CardInDeckTable.batchUpsert(cards) { card ->
@@ -29,8 +32,12 @@ class DeckService {
         }
     }
 
-    private fun parse(doc: Document, elementType: HTMLDeckElementType): List<CardInDeck> {
-        return doc.getElementById("inputArea")
+    private fun parse(
+        doc: Document,
+        elementType: HTMLDeckElementType,
+    ): List<CardInDeck> =
+        doc
+            .getElementById("inputArea")
             ?.getElementById(elementType.value)
             ?.`val`()
             ?.split("-")
@@ -38,16 +45,17 @@ class DeckService {
                 val (id, count) = data.split("_")
                 CardInDeck(id.toInt(), count.toInt())
             } ?: emptyList()
-    }
 
-    fun parseAll(doc: Document): List<CardInDeck> {
-        return HTMLDeckElementType.entries.map { elementType ->
-            parse(doc, elementType)
-        }.flatten()
-    }
+    fun parseAll(doc: Document): List<CardInDeck> =
+        HTMLDeckElementType.entries
+            .map { elementType ->
+                parse(doc, elementType)
+            }.flatten()
 }
 
-enum class HTMLDeckElementType(val value: String) {
+enum class HTMLDeckElementType(
+    val value: String,
+) {
     Pokemon("deck_pke"),
     Goods("deck_gds"),
     Tool("deck_tool"),

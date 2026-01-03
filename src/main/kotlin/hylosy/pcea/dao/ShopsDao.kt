@@ -7,10 +7,10 @@ import org.jetbrains.exposed.sql.batchUpsert
 import org.jetbrains.exposed.sql.select
 
 class ShopsDao {
-    fun getShops(ids: List<Int>): List<Shop> {
-        return ShopTable.select { ShopTable.id inList ids }
+    fun getShops(ids: List<Int>): List<Shop> =
+        ShopTable
+            .select { ShopTable.id inList ids }
             .map { it.toShop() }
-    }
 
     fun createMultiple(shops: List<Shop>) {
         ShopTable.batchUpsert(shops) { shop ->
@@ -19,13 +19,13 @@ class ShopsDao {
         }
     }
 
-    private fun ResultRow.toShop(): Shop {
-        return Shop(
+    private fun ResultRow.toShop(): Shop =
+        Shop(
             id = this[ShopTable.id],
-            name = this[ShopTable.name]
+            name = this[ShopTable.name],
         )
-    }
 }
+
 object ShopTable : Table("shops") {
     // NOTE: Set default value because of batch insert.
     val id = integer("id").default(0)
