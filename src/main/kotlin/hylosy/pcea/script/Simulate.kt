@@ -10,7 +10,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicInteger
 
-private enum class TargetCardType(val label: String) {
+private enum class TargetCardType(
+    val label: String,
+) {
     FightEnergy("Fight Energy"),
     Solrock("Solrock"),
     Lunatone("Lunatone"),
@@ -18,7 +20,6 @@ private enum class TargetCardType(val label: String) {
     FlightGong("Fighting Gong"),
     NestedBall("Nested Ball"),
 }
-
 
 fun check(hands: List<Card>): Boolean {
     val energyCount = hands.count { it.name == TargetCardType.FightEnergy.label }
@@ -70,18 +71,24 @@ fun check(hands: List<Card>): Boolean {
     } else {
         if (fightingGongCount > 0) {
             fightingGongCount -= 1
-            hasEnergy = true;
+            hasEnergy = true
         }
     }
     return hasEnergy && hasLunatone && hasSolrock
 }
 
-private fun simulate(deck: Deck, trials: Int = 200000, draws: Int = 8): Double {
-    val success = (0..trials).filter {
-        val shuffledDeckCards = deck.shuffle()
-        val hands = shuffledDeckCards.take(draws)
-        check(hands)
-    }.size
+private fun simulate(
+    deck: Deck,
+    trials: Int = 200000,
+    draws: Int = 8,
+): Double {
+    val success =
+        (0..trials)
+            .filter {
+                val shuffledDeckCards = deck.shuffle()
+                val hands = shuffledDeckCards.take(draws)
+                check(hands)
+            }.size
 
     return (success + 0.0) / trials
 }
@@ -92,27 +99,27 @@ private data class CombinationParams(
     val energyCount: Int,
     val nestedBallCount: Int,
     val flightGongCount: Int,
-    val studiumCount: Int
+    val studiumCount: Int,
 ) {
     companion object {
-        fun fromList(list: List<Int>) = CombinationParams(
-            sorlockCount = list[0],
-            lunatoneCount = list[1],
-            energyCount = list[2],
-            nestedBallCount = list[3],
-            flightGongCount = list[4],
-            studiumCount = list[5]
-        )
+        fun fromList(list: List<Int>) =
+            CombinationParams(
+                sorlockCount = list[0],
+                lunatoneCount = list[1],
+                energyCount = list[2],
+                nestedBallCount = list[3],
+                flightGongCount = list[4],
+                studiumCount = list[5],
+            )
     }
 }
 
-private fun <T> cartesianProduct(lists: List<List<T>>): List<List<T>> {
-    return lists.fold(listOf(emptyList())) { acc, list ->
+private fun <T> cartesianProduct(lists: List<List<T>>): List<List<T>> =
+    lists.fold(listOf(emptyList())) { acc, list ->
         acc.flatMap { accItem ->
             list.map { listItem -> accItem + listItem }
         }
     }
-}
 
 fun generateCombinations(): List<List<DeckCard>> {
     val sorlockCounts = 1..4
@@ -130,7 +137,7 @@ fun generateCombinations(): List<List<DeckCard>> {
             nestedBallCounts.toList(),
             flightGongCounts.toList(),
             studiumCounts.toList(),
-        )
+        ),
     ).map(CombinationParams::fromList)
         .map { params ->
             listOf(
@@ -144,22 +151,25 @@ fun generateCombinations(): List<List<DeckCard>> {
         }
 }
 
-fun main() = runBlocking {
-    val combinations = generateCombinations()
-    val total = combinations.size
-    val completed = AtomicInteger(0)
+fun main() =
+    runBlocking {
+        val combinations = generateCombinations()
+        val total = combinations.size
+        val completed = AtomicInteger(0)
 
-    combinations.map { deckCards ->
-        val deck = Deck.generate(deckCards)
-        async(Dispatchers.Default) {
-            val ratio = simulate(deck)
-            val current = completed.incrementAndGet()
-            if (current % 10 == 0) {
-                println("Progress: $current/$total (${current * 100 / total}%)")
+        combinations
+            .map { deckCards ->
+                val deck = Deck.generate(deckCards)
+                async(Dispatchers.Default) {
+                    val ratio = simulate(deck)
+                    val current = completed.incrementAndGet()
+                    if (current % 10 == 0) {
+                        println("Progress: $current/$total (${current * 100 / total}%)")
+                    }
+                    deckCards.joinToString("\t") { it -> it.card.name + "\t" + it.count } + "\t" + ratio
+                }
+            }.awaitAll()
+            .forEach { result ->
+                println(result)
             }
-            deckCards.joinToString("\t") { it -> it.card.name + "\t" + it.count } + "\t" + ratio
-        }
-    }.awaitAll().forEach { result ->
-        println(result)
     }
-}

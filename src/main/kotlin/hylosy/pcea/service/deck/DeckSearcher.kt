@@ -1,6 +1,5 @@
 package hylosy.pcea.service.deck
 
-import hylosy.pcea.model.deck.CardInDeck
 import hylosy.pcea.service.PCEAClient
 import hylosy.pcea.utils.Urls
 import io.ktor.client.statement.HttpResponse
@@ -15,19 +14,15 @@ class DeckSearcher {
         pceaClient = PCEAClient()
     }
 
-    suspend fun fetchDeckInfo(deckId: String): Document {
-        return try {
-            val response: HttpResponse = pceaClient.get(Urls.DeckEndpoint(deckId))
+    suspend fun fetchDeckInfo(deckId: String): Document =
+        try {
+            val response: HttpResponse = pceaClient.get(Urls.deckEndpoint(deckId))
             if (response.status.isSuccess()) {
                 Jsoup.parse(response.bodyAsText())
             } else {
-                throw Exception("Failed to fetch event ${deckId}")
+                throw Exception("Failed to fetch event $deckId")
             }
         } catch (e: Exception) {
             throw e
         }
-    }
-
 }
-
-

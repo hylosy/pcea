@@ -7,8 +7,8 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class ExpansionService {
-    fun getAllExpansions(): List<Expansion> {
-        return transaction {
+    fun getAllExpansions(): List<Expansion> =
+        transaction {
             ExpansionTable
                 .selectAll()
                 .map {
@@ -20,5 +20,4 @@ class ExpansionService {
                     )
                 }
         }
-    }
 }
