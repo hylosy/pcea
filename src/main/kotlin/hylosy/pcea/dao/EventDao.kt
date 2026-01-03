@@ -17,6 +17,6 @@ object EventTable : Table("events") {
     // NOTE: Set default value because of batch insert.
     val id = integer("id").default(0)
     val name = varchar("name", 100)
-
+    val eventType = integer("eventType")
     override val primaryKey = PrimaryKey(id)
 }
