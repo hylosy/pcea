@@ -4,6 +4,7 @@ import hylosy.pcea.db.DatabaseManager
 import hylosy.pcea.di.ServiceModule
 import hylosy.pcea.model.Shop
 import hylosy.pcea.model.event.Event
+import hylosy.pcea.model.event.EventType
 import hylosy.pcea.model.event.HoldingEventRecord
 import hylosy.pcea.service.PokemonCardOfficialSiteClient
 import kotlinx.coroutines.delay
@@ -33,7 +34,7 @@ suspend fun runEventTask() {
             runCatching {
                 val eventResponse = officialSiteClient.fetchEvent(offset).getOrThrow()
                 val holdingEvents = eventResponse.event.map { HoldingEventRecord.from(it) }
-                val events = eventResponse.event.map { Event(it.id, it.event_title) }.distinctBy { it.id }
+                val events = eventResponse.event.map { Event(it.id, it.event_title, EventType(it.event_type)) }.distinctBy { it.id }
                 eventService.createEvents(events)
                 holdingEventService.createEvents(holdingEvents)
                 val shops =

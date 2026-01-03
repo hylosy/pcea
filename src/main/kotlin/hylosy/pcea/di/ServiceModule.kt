@@ -16,7 +16,7 @@ object ServiceModule {
     private val eventDao: EventDao by lazy { EventDao() }
 
     val eventResultService: EventResultService by lazy {
-        EventResultService(holdingEventRecordDao, holdingEventResultDao, shopsDao)
+        EventResultService(eventDao, holdingEventRecordDao, holdingEventResultDao, shopsDao)
     }
     val holdingEventService: HoldingEventService by lazy {
         HoldingEventService(holdingEventRecordDao, holdingEventResultDao)

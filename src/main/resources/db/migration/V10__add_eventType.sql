@@ -1,0 +1,1 @@
+ALTER TABLE events ADD eventType INTEGER NOT NULL DEFAULT 0 AFTER `name`;

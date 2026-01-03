@@ -1,5 +1,6 @@
 package hylosy.pcea
 
+import hylosy.pcea.dao.EventDao
 import hylosy.pcea.dao.HoldingEventRecordDao
 import hylosy.pcea.dao.HoldingEventResultDao
 import hylosy.pcea.dao.ShopsDao
@@ -25,9 +26,11 @@ suspend fun Application.module() {
         provide<HoldingEventRecordDao> { HoldingEventRecordDao() }
         provide<HoldingEventResultDao> { HoldingEventResultDao() }
         provide<ShopsDao> { ShopsDao() }
+        provide<EventDao> { EventDao() }
 
         provide<EventResultService> {
             EventResultService(
+                this.resolve<EventDao>(),
                 this.resolve<HoldingEventRecordDao>(),
                 this.resolve<HoldingEventResultDao>(),
                 this.resolve<ShopsDao>(),
