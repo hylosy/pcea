@@ -1,0 +1,5 @@
+
+CREATE TABLE shops (
+  id BIGINT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+);
