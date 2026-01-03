@@ -1,10 +1,12 @@
 package hylosy.pcea.service.event.result
 
+import hylosy.pcea.dao.EventDao
 import hylosy.pcea.dao.HoldingEventRecordDao
 import hylosy.pcea.dao.HoldingEventRecordTable
 import hylosy.pcea.dao.HoldingEventResultDao
 import hylosy.pcea.dao.HoldingEventResultTable
 import hylosy.pcea.dao.ShopsDao
+import hylosy.pcea.model.event.EventType
 import hylosy.pcea.model.event.result.EventResultSummary
 import hylosy.pcea.model.event.result.HoldingEventResult
 import hylosy.pcea.model.event.result.PrizedDeck
@@ -16,6 +18,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 
 class EventResultService(
+    val eventsDao: EventDao,
     val holdingEventRecordDao: HoldingEventRecordDao,
     val holdingEventResultDao: HoldingEventResultDao,
     val shopsDao: ShopsDao,
@@ -50,13 +53,23 @@ class EventResultService(
     fun searchEventResults(
         from: LocalDate,
         to: LocalDate,
+        eventTypes: List<EventType>,
         page: Int,
         limit: Int,
     ): SearchPaginatedEventResultResponse =
         transaction {
             val offset = (page - 1) * limit.toLong()
-            val holdingEvents = holdingEventRecordDao.getByDates(from = from, to = to, offset = offset, limit = limit)
-            val holdingEventTotal = holdingEventRecordDao.getCountByDates(from = from, to = to)
+            val events = eventsDao.getEventByEventType(eventTypes)
+            val eventIds = events.map { it.id }
+            val holdingEvents =
+                holdingEventRecordDao.getByIdsAndDates(
+                    ids = eventIds,
+                    from = from,
+                    to = to,
+                    offset = offset,
+                    limit = limit,
+                )
+            val holdingEventTotal = holdingEventRecordDao.getCountByIdsAndDates(eventIds, from = from, to = to)
             val holdingEventResults = holdingEventResultDao.getHoldingEventResults(holdingEvents.map { it.id })
             val shops = shopsDao.getShops(holdingEvents.mapNotNull { it.shopId })
 

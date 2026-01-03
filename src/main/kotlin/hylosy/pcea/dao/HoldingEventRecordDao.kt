@@ -6,18 +6,20 @@ import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.select
 import java.time.LocalDate
 
 class HoldingEventRecordDao {
-    fun getByDates(
+    fun getByIdsAndDates(
+        ids: List<Int>,
         from: LocalDate,
         to: LocalDate?,
         offset: Long,
         limit: Int,
     ): List<HoldingEventRecord> =
-        getByDatesQuery(from, to)
+        getByIdsAndDatesQuery(ids, from, to)
             .orderBy(HoldingEventRecordTable.eventDate to SortOrder.DESC)
             .limit(limit, offset)
             .map { it.toEventRecord() }
@@ -31,11 +33,12 @@ class HoldingEventRecordDao {
             .reversed()
             .map { it.toEventRecord() }
 
-    fun getCountByDates(
+    fun getCountByIdsAndDates(
+        ids: List<Int>,
         from: LocalDate,
         to: LocalDate?,
     ): Long =
-        getByDatesQuery(from, to)
+        getByIdsAndDatesQuery(ids, from, to)
             .count()
 
     private fun getByDatesQuery(
@@ -44,6 +47,14 @@ class HoldingEventRecordDao {
     ): Query =
         HoldingEventRecordTable
             .select { HoldingEventRecordTable.eventDate.between(from, to) }
+
+    private fun getByIdsAndDatesQuery(
+        ids: List<Int>,
+        from: LocalDate,
+        to: LocalDate?,
+    ): Query =
+        HoldingEventRecordTable
+            .select { HoldingEventRecordTable.eventId inList ids and HoldingEventRecordTable.eventDate.between(from, to) }
 
     private fun ResultRow.toEventRecord(): HoldingEventRecord =
         HoldingEventRecord(

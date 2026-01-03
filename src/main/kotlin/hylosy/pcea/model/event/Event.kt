@@ -19,5 +19,7 @@ enum class EventTypeCategory(
     SealedBattle(7), // Part of limited deck battle
     ;
 
-    fun constructedDeck(): List<EventTypeCategory> = listOf(ChampionShip, CityLeague)
+    companion object {
+        fun constructedDeck(): List<EventTypeCategory> = listOf(ChampionShip, CityLeague)
+    }
 }

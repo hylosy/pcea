@@ -1,10 +1,27 @@
 package hylosy.pcea.dao
 
 import hylosy.pcea.model.event.Event
+import hylosy.pcea.model.event.EventType
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.batchUpsert
+import org.jetbrains.exposed.sql.select
 
 class EventDao {
+    fun getEventByEventType(eventTypes: List<EventType>): List<Event> =
+        EventTable
+            .select {
+                EventTable.eventType inList eventTypes.map { it.id }
+            }
+            .map { it.toEvent() }
+
+    private fun ResultRow.toEvent(): Event =
+        Event(
+            id = this[EventTable.id],
+            name = this[EventTable.name],
+            eventType = EventType(this[EventTable.eventType]),
+        )
+
     fun createMultiple(events: List<Event>) {
         EventTable.batchUpsert(events) { event ->
             this[EventTable.id] = event.id
