@@ -16,4 +16,3 @@ fun main() {
     flyway.repair()
     flyway.migrate()
 }
-
