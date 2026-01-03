@@ -12,8 +12,7 @@ class EventDao {
         EventTable
             .select {
                 EventTable.eventType inList eventTypes.map { it.id }
-            }
-            .map { it.toEvent() }
+            }.map { it.toEvent() }
 
     private fun ResultRow.toEvent(): Event =
         Event(
