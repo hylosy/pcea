@@ -1,4 +1,4 @@
-package hylosy.pcea.task
+package hylosy.pcea.script
 
 import hylosy.pcea.di.ServiceModule
 import hylosy.pcea.service.deck.DeckSearcher
@@ -8,15 +8,15 @@ import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
 import java.time.LocalDate
 
-private val logger = LoggerFactory.getLogger("RunCardInDeckTask")
+private val logger = LoggerFactory.getLogger("RunCardInDeckScript")
 
 fun main() {
     runBlocking {
-        runStoreCardInDeckTask()
+        runStoreCardInDeckScript()
     }
 }
 
-suspend fun runStoreCardInDeckTask() {
+suspend fun runStoreCardInDeckScript() {
     val deckSearcher = DeckSearcher()
     val deckService = DeckService()
     val eventResultService = ServiceModule.eventResultService

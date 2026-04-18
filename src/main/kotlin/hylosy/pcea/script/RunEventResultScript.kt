@@ -1,4 +1,4 @@
-package hylosy.pcea.task
+package hylosy.pcea.script
 
 import hylosy.pcea.config.ConfigLoader
 import hylosy.pcea.db.DatabaseManager
@@ -11,16 +11,16 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import kotlin.onFailure
 
-private val logger = LoggerFactory.getLogger("RunEventResultTask")
+private val logger = LoggerFactory.getLogger("RunEventResultScript")
 
 fun main() {
     DatabaseManager.initialize(ConfigLoader.loadDatabaseConfig())
     runBlocking {
-        runEventResultTask()
+        runEventResultScript()
     }
 }
 
-suspend fun runEventResultTask() {
+suspend fun runEventResultScript() {
     val holdingEventService = ServiceModule.holdingEventService
     val officialSiteClient = PokemonCardOfficialSiteClient()
     val taskConfig = ConfigLoader.loadFetchHoldingEventResultTaskConfig()

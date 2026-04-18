@@ -57,15 +57,15 @@ tasks.test {
 
 tasks.register<JavaExec>("runEventResult") {
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("hylosy.pcea.task.RunEventResultTaskKt")
+    mainClass.set("hylosy.pcea.script.RunEventResultScriptKt")
 }
 
 tasks.register<JavaExec>("runCardInDeck") {
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("hylosy.pcea.task.RunCardInDeckTaskKt")
+    mainClass.set("hylosy.pcea.script.RunCardInDeckScriptKt")
 }
 
 tasks.register<JavaExec>("migrateDatabase") {
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("hylosy.pcea.task.MigrateDatabaseKt")
+    mainClass.set("hylosy.pcea.script.MigrateDatabaseKt")
 }

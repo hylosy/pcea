@@ -1,4 +1,5 @@
-package hylosy.pcea.task
+package hylosy.pcea.script
+
 import org.flywaydb.core.Flyway
 
 fun main() {
