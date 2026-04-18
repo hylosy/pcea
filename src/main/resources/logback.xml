@@ -4,7 +4,9 @@
             <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="trace">
+    <logger name="Exposed" level="${SQL_LOG_LEVEL:-warn}"/>
+
+    <root level="info">
         <appender-ref ref="APPENDER"/>
     </root>
 </configuration>

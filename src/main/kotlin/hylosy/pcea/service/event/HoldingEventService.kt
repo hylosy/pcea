@@ -44,6 +44,15 @@ class HoldingEventService(
             holdingEventResultDao.getDeckIdsByHoldingEventIds(holdingEventIds)
         }
 
+    fun getDeckCodesByDateRange(
+        from: LocalDate,
+        to: LocalDate,
+    ): List<String> =
+        transaction {
+            val holdingEventIds = holdingEventRecordDao.getByDates(from, to).map { it.id }
+            holdingEventResultDao.getDeckIdsByHoldingEventIds(holdingEventIds)
+        }
+
     fun createHoldingEventResults(eventResults: List<HoldingEventResult>) {
         try {
             transaction {

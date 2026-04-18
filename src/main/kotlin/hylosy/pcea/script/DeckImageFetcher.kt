@@ -3,77 +3,51 @@ package hylosy.pcea.script
 import hylosy.pcea.config.ConfigLoader
 import hylosy.pcea.db.DatabaseManager
 import hylosy.pcea.di.ServiceModule
-import hylosy.pcea.service.PokemonCardOfficialSiteClient
+import hylosy.pcea.service.EagleClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import java.io.File
+import org.slf4j.LoggerFactory
+import java.time.LocalDate
+
+private val logger = LoggerFactory.getLogger("DeckImageFetcher")
 
 fun main(args: Array<String>) {
-    System.out.printf("Start to fetch deck images task\n")
-    DatabaseManager.initialize(
-        ConfigLoader.loadDatabaseConfig(),
-    )
+    val params = args.toList().chunked(2).associate { it[0] to it[1] }
+    val from = params["--from"]?.let { LocalDate.parse(it) }
+    val to = params["--to"]?.let { LocalDate.parse(it) }
+
+    DatabaseManager.initialize(ConfigLoader.loadDatabaseConfig())
     runBlocking {
-        fetchDeckImages()
+        fetchDeckImages(from, to)
     }
 }
 
-suspend fun fetchDeckImages() {
+suspend fun fetchDeckImages(
+    from: LocalDate? = null,
+    to: LocalDate? = null,
+) {
     val taskConfig = ConfigLoader.loadTaskConfig()
     val holdingEventService = ServiceModule.holdingEventService
+    val eagleClient = EagleClient()
+
     val deckCodes =
-        if (taskConfig.holdingEventIds.isEmpty()) {
-            holdingEventService.getDeckCodes()
-        } else {
-            holdingEventService.getDeckCodesByHoldingEventIds(taskConfig.holdingEventIds)
+        when {
+            from != null && to != null -> holdingEventService.getDeckCodesByDateRange(from, to)
+            taskConfig.holdingEventIds.isNotEmpty() -> holdingEventService.getDeckCodesByHoldingEventIds(taskConfig.holdingEventIds)
+            else -> holdingEventService.getDeckCodes()
         }
-    val deckCodesInImage = fetchStoredImageNames(taskConfig.inputImagePath)
-    deckCodes.filterNot { deckCodesInImage.contains(it) }.forEach { deckCode ->
-        downloadImage(deckCode, "${taskConfig.outputImagePath}$deckCode.png")
-        println(deckCode)
+
+    logger.info("Target deck codes: ${deckCodes.size}")
+    deckCodes.forEach { deckCode ->
+        if (eagleClient.exists(name = deckCode, folderId = taskConfig.eagleFolderId)) {
+            logger.info("Already exists in Eagle, skipping: $deckCode")
+            return@forEach
+        }
+        val url = "https://www.pokemon-card.com/deck/deckView.php/deckID/$deckCode.png"
+        eagleClient
+            .addFromURL(url = url, name = deckCode, folderId = taskConfig.eagleFolderId)
+            .onSuccess { logger.info("Imported to Eagle: $deckCode") }
+            .onFailure { logger.error("Failed to import to Eagle: $deckCode", it) }
         delay(1000)
     }
 }
-
-/**
- * @param deckCode
- * @param outputPath e.g: "/path/to/images/deck_${deckCode}.png"）
- */
-suspend fun downloadImage(
-    deckCode: String,
-    outputPath: String,
-): Result<Unit> {
-    val officialSiteClient = PokemonCardOfficialSiteClient()
-    return officialSiteClient.fetchImage(deckCode).fold(
-        onSuccess = { imageBytes ->
-            try {
-                File(outputPath).apply {
-                    parentFile?.mkdirs()
-                    writeBytes(imageBytes)
-                }
-                Result.success(Unit)
-            } catch (e: Exception) {
-                Result.failure(e)
-            }
-        },
-        onFailure = { error ->
-            Result.failure(error)
-        },
-    )
-}
-
-fun fetchStoredImageNames(inputImagePath: String): Set<String> =
-    try {
-        File(inputImagePath)
-            .apply {
-                require(exists() && isDirectory) { "Directory does not exist: $inputImagePath" }
-            }.let { directory ->
-                directory
-                    .listFiles()
-                    ?.filter { it.isFile && it.name.endsWith(".png") }
-                    ?.map { it.nameWithoutExtension }
-                    ?: emptyList()
-            }.toSet()
-    } catch (e: Exception) {
-        throw e
-    }

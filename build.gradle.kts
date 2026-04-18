@@ -55,17 +55,42 @@ tasks.test {
     useJUnitPlatform()
 }
 
+val sqlLogLevel = System.getProperty("SQL_LOG_LEVEL", "warn")
+
 tasks.register<JavaExec>("runEventResult") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("hylosy.pcea.script.RunEventResultScriptKt")
+    systemProperty("SQL_LOG_LEVEL", sqlLogLevel)
+    args = listOfNotNull(
+        System.getProperty("from")?.let { listOf("--from", it) },
+        System.getProperty("to")?.let { listOf("--to", it) },
+    ).flatten()
 }
 
 tasks.register<JavaExec>("runCardInDeck") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("hylosy.pcea.script.RunCardInDeckScriptKt")
+    systemProperty("SQL_LOG_LEVEL", sqlLogLevel)
+}
+
+tasks.register<JavaExec>("runEvent") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("hylosy.pcea.script.EventFetcherKt")
+    systemProperty("SQL_LOG_LEVEL", sqlLogLevel)
+}
+
+tasks.register<JavaExec>("fetchDeckImages") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("hylosy.pcea.script.DeckImageFetcherKt")
+    systemProperty("SQL_LOG_LEVEL", sqlLogLevel)
+    args = listOfNotNull(
+        System.getProperty("from")?.let { listOf("--from", it) },
+        System.getProperty("to")?.let { listOf("--to", it) },
+    ).flatten()
 }
 
 tasks.register<JavaExec>("migrateDatabase") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("hylosy.pcea.script.MigrateDatabaseKt")
+    systemProperty("SQL_LOG_LEVEL", sqlLogLevel)
 }

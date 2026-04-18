@@ -9,9 +9,11 @@ import hylosy.pcea.model.event.HoldingEventRecord
 import hylosy.pcea.service.PokemonCardOfficialSiteClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("RunEventScript")
 
 fun main(args: Array<String>) {
-    System.out.printf("Start event task\n")
     DatabaseManager.initialize(
         hylosy.pcea.config.ConfigLoader
             .loadDatabaseConfig(),
@@ -30,6 +32,7 @@ suspend fun runEventTask() {
     var offset = 0
     var isSuccess = true
     while (isSuccess) {
+        val page = offset / 20 + 1
         val result =
             runCatching {
                 val eventResponse = officialSiteClient.fetchEvent(offset).getOrThrow()
@@ -43,9 +46,10 @@ suspend fun runEventTask() {
                         .map { Shop(it.shop_id!!, it.shop_name!!) }
                         .distinctBy { it.id }
                 shopService.createShops(shops)
+                logger.info("page=$page saved ${events.size} events, ${shops.size} shops")
             }
         result.onFailure {
-            System.out.printf("Error: $it")
+            logger.error("page=$page failed: $it")
             isSuccess = false
         }
         delay(1000)

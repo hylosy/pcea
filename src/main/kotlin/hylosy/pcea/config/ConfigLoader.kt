@@ -37,9 +37,11 @@ object ConfigLoader {
                 .parseFile(File("src/main/resources/task.conf"))
                 .resolve()
 
+        val eagleFolderId = if (config.hasPath("image-fetcher.eagle-folder-id")) config.getString("image-fetcher.eagle-folder-id") else ""
+        require(eagleFolderId.isNotBlank()) { "image-fetcher.eagle-folder-id is not set in task.conf" }
+
         return TaskConfig(
-            inputImagePath = config.getString("image-fetcher.input-image-directory-path"),
-            outputImagePath = config.getString("image-fetcher.input-image-directory-path"),
+            eagleFolderId = eagleFolderId,
             holdingEventIds = config.getLongList("image-fetcher.holding-event-ids"),
         )
     }
@@ -69,8 +71,7 @@ object ConfigLoader {
 }
 
 data class TaskConfig(
-    val inputImagePath: String,
-    val outputImagePath: String,
+    val eagleFolderId: String,
     val holdingEventIds: List<Long>,
 )
 

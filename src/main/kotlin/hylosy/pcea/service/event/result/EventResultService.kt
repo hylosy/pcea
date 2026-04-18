@@ -95,7 +95,7 @@ class EventResultService(
                                     .sortedBy { it.rank }
                                     .map {
                                         // TODO: Set image URL path each environment.
-                                        val imageUrl = "dev/images/${it.deckId}.png"
+                                        val imageUrl = "/api/images?name=${it.deckId}.png"
                                         PrizedDeck(it.holdingEventId, it.rank, it.deckId, imageUrl)
                                     },
                         )
