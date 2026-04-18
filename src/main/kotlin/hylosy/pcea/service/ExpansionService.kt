@@ -17,6 +17,7 @@ class ExpansionService {
                         name = it[ExpansionTable.name],
                         regulation = Regulation(it[ExpansionTable.regulation]),
                         releaseDate = it[ExpansionTable.releaseDate],
+                        pg = it[ExpansionTable.pg],
                     )
                 }
         }
