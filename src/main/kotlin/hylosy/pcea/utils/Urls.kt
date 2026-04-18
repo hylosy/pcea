@@ -10,13 +10,11 @@ object Urls {
 
     fun cardSearchEndpoint(
         page: Int,
-        expansion: Int,
-    ) = // sc_tr_tr=1 goods
-        // sc_tr_goods=1 tools
-        // sc_tr_sp=1 support
-        // sc_tr_st=1 studium
-        // sc_energy_basic=1
-        // sc_energy_special=1
-        // se_ta=pokemon
-        "https://www.pokemon-card.com/card-search/resultAPI.php?keyword=&se_ta=&regulation_sidebar_form=XY&pg=$expansion&illust=&sm_and_keyword=true&page=$page"
+        expansionNumericId: Int,
+    ) = "https://www.pokemon-card.com/card-search/resultAPI.php?keyword=&se_ta=&regulation_sidebar_form=XY&pg=$expansionNumericId&illust=&sm_and_keyword=true&page=$page"
+
+    fun cardDetailEndpoint(
+        cardId: Long,
+        regulation: String,
+    ) = "https://www.pokemon-card.com/card-search/details.php/card/$cardId/regu/$regulation"
 }

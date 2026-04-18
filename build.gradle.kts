@@ -93,6 +93,14 @@ tasks.register<JavaExec>("fetchDeckImages") {
     ).flatten()
 }
 
+tasks.register<JavaExec>("runPhysicalCard") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("hylosy.pcea.script.RunPhysicalCardScriptKt")
+    systemProperty("SQL_LOG_LEVEL", sqlLogLevel)
+    systemProperty("expansion", System.getProperty("expansion") ?: "")
+    systemProperty("expansionId", System.getProperty("expansionId") ?: "")
+}
+
 tasks.register<JavaExec>("migrateDatabase") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("hylosy.pcea.script.MigrateDatabaseKt")

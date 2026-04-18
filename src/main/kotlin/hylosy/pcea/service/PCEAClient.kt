@@ -15,7 +15,7 @@ class PCEAClient {
         mHttpClient =
             HttpClient(CIO) {
                 install(ContentNegotiation) {
-                    json(Json { ignoreUnknownKeys = false })
+                    json(Json { ignoreUnknownKeys = true })
                 }
             }
     }
