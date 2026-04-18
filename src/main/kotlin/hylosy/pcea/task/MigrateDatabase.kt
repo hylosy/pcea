@@ -8,7 +8,7 @@ fun main() {
         Flyway
             .configure()
             .dataSource(
-                "jdbc:mysql://127.0.0.1:3306/pcea",
+                "jdbc:mysql://127.0.0.1:3306/pcea?useSSL=false&allowPublicKeyRetrieval=true",
                 "root",
                 "root",
             ).locations("filesystem:src/main/resources/db/migration")

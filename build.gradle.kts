@@ -54,3 +54,18 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.register<JavaExec>("runEventResult") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("hylosy.pcea.task.RunEventResultTaskKt")
+}
+
+tasks.register<JavaExec>("runCardInDeck") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("hylosy.pcea.task.RunCardInDeckTaskKt")
+}
+
+tasks.register<JavaExec>("migrateDatabase") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("hylosy.pcea.task.MigrateDatabaseKt")
+}

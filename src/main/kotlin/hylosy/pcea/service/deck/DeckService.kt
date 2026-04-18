@@ -41,6 +41,7 @@ class DeckService {
             ?.getElementById(elementType.value)
             ?.`val`()
             ?.split("-")
+            ?.filter { data -> data.isNotEmpty() }
             ?.map { data ->
                 val (id, count) = data.split("_")
                 CardInDeck(id.toInt(), count.toInt())

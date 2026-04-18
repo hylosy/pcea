@@ -28,3 +28,4 @@ object ServiceModule {
         EventService(eventDao)
     }
 }
+
