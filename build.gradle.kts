@@ -71,6 +71,10 @@ tasks.register<JavaExec>("runCardInDeck") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("hylosy.pcea.script.RunCardInDeckScriptKt")
     systemProperty("SQL_LOG_LEVEL", sqlLogLevel)
+    args = listOfNotNull(
+        System.getProperty("from"),
+        System.getProperty("to"),
+    )
 }
 
 tasks.register<JavaExec>("runEvent") {

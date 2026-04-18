@@ -24,8 +24,11 @@
 # イベント結果を取得して保存（日付指定）(Depend on runEvent)
 ./gradlew runEventResult -Dfrom=2026-04-01 -Dto=2026-04-18
 
-# デッキ内カード情報を取得して保存
+# デッキ内カード情報を取得して保存（日付未指定は当日1日分）
 ./gradlew runCardInDeck
+
+# デッキ内カード情報を取得して保存（日付指定）
+./gradlew runCardInDeck -Dfrom=2026-02-16 -Dto=2026-02-19
 
 # デッキ画像を Eagle にインポート（既存の画像はスキップ）
 ./gradlew fetchDeckImages

@@ -10,19 +10,23 @@ import java.time.LocalDate
 
 private val logger = LoggerFactory.getLogger("RunCardInDeckScript")
 
-fun main() {
+fun main(args: Array<String>) {
+    val from = if (args.size >= 1) LocalDate.parse(args[0]) else LocalDate.now()
+    val to = if (args.size >= 2) LocalDate.parse(args[1]) else from
     runBlocking {
-        runStoreCardInDeckScript()
+        runStoreCardInDeckScript(from, to)
     }
 }
 
-suspend fun runStoreCardInDeckScript() {
+suspend fun runStoreCardInDeckScript(
+    from: LocalDate,
+    to: LocalDate,
+) {
     val deckSearcher = DeckSearcher()
     val deckService = DeckService()
     val eventResultService = ServiceModule.eventResultService
 
-    val from = LocalDate.of(2026, 2, 16)
-    val to = LocalDate.of(2026, 2, 19)
+    logger.info("Fetching event results from=$from to=$to")
     val eventResults = eventResultService.getEventResults(from, to)
     val deckIds = eventResults.map { it.deckId }
     logger.info("Target deckIds: $deckIds")
