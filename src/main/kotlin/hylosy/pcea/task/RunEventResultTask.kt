@@ -8,7 +8,10 @@ import hylosy.pcea.service.FetchEventResultException
 import hylosy.pcea.service.PokemonCardOfficialSiteClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import kotlin.onFailure
+
+private val logger = LoggerFactory.getLogger("RunEventResultTask")
 
 fun main() {
     DatabaseManager.initialize(ConfigLoader.loadDatabaseConfig())
@@ -34,7 +37,7 @@ suspend fun runEventResultTask() {
             } else {
                 emptyList()
             }
-        println(holdingEventIds)
+        logger.info("Target holdingEventIds: $holdingEventIds")
         holdingEventIds.forEach { holdingEventId ->
             val result =
                 runCatching {
@@ -42,13 +45,14 @@ suspend fun runEventResultTask() {
                     val holdingEventResults =
                         eventResultResponse.results.map { HoldingEventResult.from(holdingEventId, it) }
                     holdingEventService.createHoldingEventResults(holdingEventResults)
+                    logger.info("Saved results for holdingEventId=$holdingEventId")
                     delay(1000)
                 }
             result.onFailure { exception ->
                 if (exception is FetchEventResultException) {
                     // noop
                 } else {
-                    System.out.printf("Error: $exception")
+                    logger.error("Failed to create events: $exception")
                     return
                 }
             }

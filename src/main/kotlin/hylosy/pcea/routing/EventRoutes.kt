@@ -23,7 +23,7 @@ suspend fun Application.configureEventRoutes() {
                 val limitParam = call.request.queryParameters["limit"]
 
                 val from = fromParam?.let { LocalDate.parse(it) } ?: LocalDate.of(2018, 12, 25)
-                val to = toParam?.let { LocalDate.parse(it) } ?: LocalDate.of(2025, 12, 25)
+                val to = toParam?.let { LocalDate.parse(it) } ?: LocalDate.of(2026, 12, 25)
                 val page = pageParam?.toInt() ?: 1
                 val limit = limitParam?.toInt() ?: 100
 
