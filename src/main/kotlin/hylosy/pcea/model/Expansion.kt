@@ -27,6 +27,7 @@ val regulations = setOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
 
 val expansionList =
     listOf(
+        Expansion("m4",   "ニンジャスピナー",                                      Regulation("J"), LocalDate.of(2026, 3, 13),   953),
         Expansion("m3",   "ムニキスゼロ",                                       Regulation("J"), LocalDate.of(2026, 1, 23),  952),
         Expansion("mC",   "スタートデッキ100 バトルコレクション",                 Regulation("J"), LocalDate.of(2025, 12, 19), 951),
         Expansion("m2a",  "MEGAドリームex",                                      Regulation("J"), LocalDate.of(2025, 11, 28), 950),
